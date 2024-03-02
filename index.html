@@ -33,9 +33,9 @@
   <script src="https://unpkg.com/pmtiles@3.0.3/dist/pmtiles.js"></script>
   -->
 
-  <link rel="stylesheet" href="_cdn/maplibre-gl.css" crossorigin="anonymous">
-  <script src="_cdn/maplibre-gl.js" crossorigin="anonymous"></script>
-  <script src="_cdn/pmtiles.js"></script>
+  <link rel="stylesheet" href="cdn/maplibre-gl.css" crossorigin="anonymous">
+  <script src="cdn/maplibre-gl.js" crossorigin="anonymous"></script>
+  <script src="cdn/pmtiles.js"></script>
 
   <style>
     body {
@@ -63,7 +63,7 @@
     <div id="map"></div>
   </div>
 
-  <script src="_maplibre/osm-bright-gl-style/style.js"></script>
+  <script src="maplibre/osm-bright-gl-style/style.js"></script>
   <script type="text/javascript">
     const mapCenter = llSydney
 
@@ -110,7 +110,7 @@
 
     const p = new pmtiles.PMTiles(PMTILES_URL);
     osmStyle.sources.openmaptiles.url = "pmtiles://" + PMTILES_URL
-    osmStyle.sprite = MAP_SITE_URL + "/_maplibre/osm-bright-gl-style/sprite@2x"
+    osmStyle.sprite = MAP_SITE_URL + "/maplibre/osm-bright-gl-style/sprite@2x"
     // osmStyle.layers[0] = {
     //   "id": "background",
     //   "type": "background",
