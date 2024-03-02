@@ -1,0 +1,167 @@
+<html>
+
+<head>
+  <title>PMTiles MapLibre Example</title>
+  <meta charset="utf-8" />
+
+  <!-- This prevents separate load request of favicon -->
+  <link rel="shortcut icon" type="image/x-icon"
+    href="data:image/x-icon;base64,00000100010001010000010018003000000016000000280000000100000002000000010018000000000000000000000000000000000000000000000000000000ff0000000000" />
+
+  <!--
+  source https://github.com/protomaps/PMTiles/blob/main/js/examples/maplibre.html
+
+  curl -L -O https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.css
+  curl -L -O https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js
+  curl -L -O https://unpkg.com/maplibre-gl@latest/dist/maplibre-gl.js.map
+  curl -L -O https://unpkg.com/pmtiles@latest/dist/pmtiles.js
+
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@3.3.1/dist/maplibre-gl.css" crossorigin="anonymous">
+  <script src="https://unpkg.com/maplibre-gl@3.3.1/dist/maplibre-gl.js" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/pmtiles@3.0.3/dist/pmtiles.js"></script>
+  -->
+
+  <link rel="stylesheet" href="_cdn/maplibre-gl.css" crossorigin="anonymous">
+  <script src="_cdn/maplibre-gl.js" crossorigin="anonymous"></script>
+  <script src="_cdn/pmtiles.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+    }
+
+    #map-container {
+      width: 100vw;
+      height: 100%;
+      align-items: center;
+      justify-content: center;
+      display: flex;
+    }
+
+    #map {
+      height: 80%;
+      width: 80%;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="position"></Div>
+  <div id="map-container">
+    <div id="map"></div>
+  </div>
+
+  <script src="_maplibre/osm-bright-gl-style/style.js"></script>
+  <script type="text/javascript">
+    const println = console.log
+
+    const MAP_SITE_URL = 'http://localhost:1080'
+    const PMTILES_URL = MAP_SITE_URL + "/sydney.pmtiles";
+
+    const llSydney = [-33.865143, 151.209900]
+    const llFiji = [-17.713371, 178.065033]
+    const llMonaco = [43.733334, 7.416667]
+
+    const mapCenter = llSydney
+
+
+
+    function disableFeatures(map) {
+      map.showTileBoundaries = false;
+
+      // disable map rotation using right click + drag
+      map.dragRotate.disable();
+
+      // disable map rotation using touch rotation gesture
+      map.touchPitch.disable()
+      map.touchZoomRotate.disableRotation();
+
+      // map.scrollZoom.disable();
+
+      // Disable 3D buildings if included in the style
+      map.on('style.load', function () {
+        map.removeLayer('building-3d'); // Remove the 3D building layer
+      });
+    }
+
+    function enableFeatures(map) {
+      // Add navigation control (zoom in/out buttons)
+      map.addControl(new maplibregl.NavigationControl({ showCompass: false }));
+
+      // Add scale control
+      map.addControl(new maplibregl.ScaleControl());
+
+      // Add geolocate control (to show user's current location)
+      map.addControl(new maplibregl.GeolocateControl({
+        positionOptions: {
+          enableHighAccuracy: true
+        },
+        trackUserLocation: true
+      }));
+    }
+
+    // add the PMTiles plugin to the maplibregl global.
+    let protocol = new pmtiles.Protocol();
+    maplibregl.addProtocol("pmtiles", protocol.tile);
+
+
+    const p = new pmtiles.PMTiles(PMTILES_URL);
+    osmStyle.sources.openmaptiles.url = "pmtiles://" + PMTILES_URL
+    osmStyle.sprite = MAP_SITE_URL + "/_maplibre/osm-bright-gl-style/sprite@2x"
+    // osmStyle.layers[0] = {
+    //   "id": "background",
+    //   "type": "background",
+    //   "paint": {
+    //     "background-color": "purple"
+    //   }
+    // }
+
+    // this is so we share one instance across the JS code and the map renderer
+    protocol.add(p);
+
+    // we first fetch the header so we can get the center lon, lat of the map.
+    p.getHeader().then(h => {
+      const map = new maplibregl.Map({
+        container: 'map',
+        zoom: h.maxZoom - 2,
+        center: [mapCenter[1], mapCenter[0]],
+        // center: [h.centerLon, h.centerLat],
+        // maxBounds: [[149.43508002805265, -34.94679801249191], [152.34257405246944, -32.75460905235671]],
+        maxBounds: [[h.minLon, h.minLat], [h.maxLon, h.maxLat]],
+        pitchWithRotate: false,
+        validateStyle: true, // disable in production to improve speed
+        style: osmStyle,
+        attributionControl: {
+          compact: true,
+          customAttribution: [
+            "<a href='https://maplibre.org' target='_blank'>MapLibre</a>",
+            "&copy; <a href='https://www.openstreetmap.org/copyright' target='_blank'>OpenStreetMap</a> contributors"
+          ]
+        },
+      });
+
+      disableFeatures(map)
+      enableFeatures(map)
+
+      // Mark center of map
+      const marker1 = new maplibregl.Marker()
+        .setLngLat([mapCenter[1], mapCenter[0]])
+        .addTo(map);
+
+      // Add a second movable marker
+      const radiusFromCenter = 0.009
+      const marker2 = new maplibregl.Marker({ color: "#0000FF", draggable: true })
+        .setLngLat([mapCenter[1] - radiusFromCenter, mapCenter[0] - radiusFromCenter])
+        .addTo(map);
+
+      marker2.on('dragend', function (evt) {
+        const lastGeo = evt.target.getLngLat()
+
+        const positionDiv = document.getElementById("position")
+        positionDiv.innerText = `lon,lat = ${lastGeo.lng},${lastGeo.lat}`
+      })
+    })
+  </script>
+</body>
+
+</html>
