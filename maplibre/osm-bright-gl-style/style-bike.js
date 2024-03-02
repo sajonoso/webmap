@@ -100,7 +100,7 @@ const osmStyle = {
     // glyphs: "/glyphs/{fontstack}/{range}.pbf",
     // sprite: window.location.origin + "/map-icons/spritesheets/sheet",
     sprite: "http://example.com/REPLACE_IN_JS/mapstyles/osm-bright-gl-style/sprite",
-    glyphs: "_maplibre/font/{fontstack}/{range}.pbf",
+    glyphs: "maplibre/font/{fontstack}/{range}.pbf",
     layers: [
       {
         id: "background",
