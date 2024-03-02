@@ -3,6 +3,18 @@
 <head>
   <title>PMTiles MapLibre Example</title>
   <meta charset="utf-8" />
+  <base href="https://sajonoso.github.io/webmap/">
+  <script>
+    const println = console.log
+
+    const MAP_SITE_URL = 'https://sajonoso.github.io/webmap'
+    const PMTILES_URL = MAP_SITE_URL + "/sydney.pmtiles";
+
+    const llSydney = [-33.865143, 151.209900]
+    const llFiji = [-17.713371, 178.065033]
+    const llMonaco = [43.733334, 7.416667]
+
+  </script>
 
   <!-- This prevents separate load request of favicon -->
   <link rel="shortcut icon" type="image/x-icon"
@@ -53,15 +65,6 @@
 
   <script src="_maplibre/osm-bright-gl-style/style.js"></script>
   <script type="text/javascript">
-    const println = console.log
-
-    const MAP_SITE_URL = 'http://localhost:1080'
-    const PMTILES_URL = MAP_SITE_URL + "/sydney.pmtiles";
-
-    const llSydney = [-33.865143, 151.209900]
-    const llFiji = [-17.713371, 178.065033]
-    const llMonaco = [43.733334, 7.416667]
-
     const mapCenter = llSydney
 
 
